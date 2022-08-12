@@ -26,7 +26,7 @@ public class ImageController {
     @RequestMapping(value = "/getImage", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_GIF_VALUE, MediaType.IMAGE_PNG_VALUE})
     public BufferedImage getImage(@RequestParam(defaultValue = "10000") Long qq) throws IOException {
         // 创建400*300图片
-        BufferedImage bufferedImage = new BufferedImage(400, 300, BufferedImage.TYPE_INT_RGB);
+        BufferedImage bufferedImage = new BufferedImage(100, 125, BufferedImage.TYPE_INT_RGB);
         // 获取画笔
         Graphics2D g = bufferedImage.createGraphics();
 
@@ -35,12 +35,12 @@ public class ImageController {
         g.fillRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
 
         // 写QQ 黑色字体 字号30。中文可能需要自己加载字体文件
-        g.setFont(new Font(null, Font.PLAIN, 30));
+        g.setFont(new Font(null, Font.PLAIN, 15));
         g.setColor(Color.BLACK);
-        g.drawString(qq.toString(), 200, 150);
+        g.drawString(qq.toString(), 10, 120);
 
         // 画头像
-        g.drawImage(getAvatar(qq), 80, 100, null);
+        g.drawImage(getAvatar(qq), 0, 0, null);
         return bufferedImage;
     }
 

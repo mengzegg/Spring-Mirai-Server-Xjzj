@@ -5,6 +5,8 @@ spring:
       - net.lz1998.pbbot.plugin.DemoPlugin # 测试插件
       - net.lz1998.pbbot.plugin.ImagePlugin # 动态生成图片插件
       - net.lz1998.pbbot.plugin.HelloPlugin # 测试插件
+      - net.lz1998.pbbot.plugin.users.UserPlugin
+      - net.lz1998.pbbot.plugin.users.SiginPlugin
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/xjzj?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true&useSSL=true

@@ -16,6 +16,7 @@ public class HelloPlugin extends BotPlugin {
         // 这里展示了event消息链的用法. List里面可能是 at -> text -> image -> face -> text 形式, 根据元素类型组成 List。
         // List 每一个元素 有type(String)和data(Map<String, String>)，type 表示元素是什么, data 表示元素的具体数据，如at qq，image url，face id
         List<OnebotBase.Message> messageChain = event.getMessageList();
+        long qq=event.getUserId();
         if (messageChain.size() > 0) {
             OnebotBase.Message message = messageChain.get(0);
             if (message.getType().equals("text")) {
@@ -32,6 +33,7 @@ public class HelloPlugin extends BotPlugin {
     public int onGroupMessage(@NotNull Bot bot, @NotNull OnebotEvent.GroupMessageEvent event) {
         // 这里展示了RawMessage的用法（纯String）
         long groupId = event.getGroupId();
+        long qq=event.getUserId();
         String text = event.getRawMessage();
         if ("hello".equals(text)) {
             bot.sendGroupMsg(groupId, "hi", false);
