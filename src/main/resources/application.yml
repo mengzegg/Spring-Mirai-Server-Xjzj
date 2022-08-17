@@ -3,10 +3,11 @@ spring:
     plugin-list: # 配置插件列表（有序），如果插件返回0，继续执行剩余插件，如果插件返回1，终止剩余插件执行
       - net.lz1998.pbbot.plugin.LogPlugin # 日志插件
       - net.lz1998.pbbot.plugin.DemoPlugin # 测试插件
-      - net.lz1998.pbbot.plugin.ImagePlugin # 动态生成图片插件
-      - net.lz1998.pbbot.plugin.HelloPlugin # 测试插件
+      #       - net.lz1998.pbbot.plugin.ImagePlugin # 动态生成图片插件
+      #       - net.lz1998.pbbot.plugin.HelloPlugin # 测试插件
       - net.lz1998.pbbot.plugin.users.UserPlugin
       - net.lz1998.pbbot.plugin.users.SiginPlugin
+      - net.lz1998.pbbot.stacklands.plugin.StacklandsPlugin
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/xjzj?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true&useSSL=true

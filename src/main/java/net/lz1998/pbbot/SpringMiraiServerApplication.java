@@ -1,8 +1,12 @@
 package net.lz1998.pbbot;
 
+import java.util.HashMap;
+import java.util.Map;
+import net.lz1998.pbbot.stacklands.pojo.Stacklands;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @EnableAspectJAutoProxy
@@ -12,5 +16,8 @@ public class SpringMiraiServerApplication {
     public static void main(String[] args) {
         SpringApplication.run(SpringMiraiServerApplication.class, args);
     }
-
+    @Bean
+    Map<Long, Stacklands> stacklandsMap(){
+        return new HashMap<>();
+    }
 }

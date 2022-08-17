@@ -74,6 +74,7 @@ public class SiginPlugin extends BotPlugin {
       }
 
       bot.sendGroupMsg(groupId, msg, false);
+      return MESSAGE_BLOCK;
     }
 
     return MESSAGE_IGNORE;
