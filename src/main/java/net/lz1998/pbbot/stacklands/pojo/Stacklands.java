@@ -32,5 +32,16 @@ public class Stacklands {
         && this.getWorldY() + this.getHeight() / 2 > y1
         && this.getWorldY() + this.getWidth() / 2 < y2;
   }
+  public boolean hitSee(Stacklands other) { // 可视算法
+    if (this.getWorldX()-other.getWorldX()>500 || this.getWorldX()-other.getWorldX()<500){
+      if (this.getWorldY()-other.getWorldY()>500 || this.getWorldY()-other.getWorldY()<500) {
+        return true;
+      }else {
+        return false;
+      }
+    }else {
+      return false;
+    }
+  }
 
 }

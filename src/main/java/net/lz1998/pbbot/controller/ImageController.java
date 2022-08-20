@@ -1,10 +1,12 @@
 package net.lz1998.pbbot.controller;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 import net.lz1998.pbbot.stacklands.pojo.Stacklands;
 import net.lz1998.pbbot.stacklands.pojo.build.StacklandsBuilds;
 import net.lz1998.pbbot.stacklands.pojo.unit.StacklandsUnit;
+import net.lz1998.pbbot.stacklands.pojo.unit.monster.StacklandsMonster;
 import net.lz1998.pbbot.stacklands.pojo.unit.monster.StacklandsUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -23,7 +25,11 @@ import java.net.URL;
 @RestController
 public class ImageController {
     @Autowired
-    Map<Long,Stacklands> stacklandsMap;
+    Map<Long, StacklandsUser> userMap;
+    @Autowired
+    java.util.List<StacklandsBuilds> buildList;
+    @Autowired
+    List<StacklandsMonster> monsterList;
     // 如果需要返回BufferedImage，必须有下面的converter。如果没有converter只能返回[]byte。
     @Bean
     public BufferedImageHttpMessageConverter bufferedImageHttpMessageConverter() {
@@ -60,7 +66,7 @@ public class ImageController {
     // 画卡片，默认访问地址 http://localhost:8081/getStacklandsImage?imageName=123
     @RequestMapping(value = "/getStacklandsImage", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_GIF_VALUE, MediaType.IMAGE_PNG_VALUE})
     public BufferedImage getStacklandsImage(@RequestParam(defaultValue = "10000")long qq) throws IOException {
-        Stacklands stacklands=stacklandsMap.get(qq);
+        Stacklands stacklands=userMap.get(qq);
         // 创建700*800图片
         BufferedImage bufferedImage = new BufferedImage(stacklands.getWidth(), stacklands.getHeight(), BufferedImage.TYPE_INT_RGB);
         // 获取画笔
@@ -71,38 +77,32 @@ public class ImageController {
         g.setFont(new Font(null, Font.PLAIN, 40));
         //如果是单位
         if (stacklands instanceof StacklandsUnit){
-            StacklandsUnit stacklandsUnit=(StacklandsUnit)stacklands;
+            StacklandsUser stacklandsUnit=(StacklandsUser)stacklands;
             // 画背景
-            g.drawImage(getStacklandsAvatar("血量卡片.png"),0,0, null);
+            g.drawImage(getStacklandsAvatar("凡人0"+stacklandsUnit.getRealm()+".png"),0,0,stacklandsUnit.getWidth(),stacklands.getHeight(), null);
             //画血量
             g.setColor(Color.white);
-            g.drawString(stacklandsUnit.getNowHealth()+"", 217, 285);
+            g.drawString(stacklandsUnit.getNowHealth()+"", 235, 285);
             //画攻击力
             g.setColor(Color.RED);
-            g.drawString("\uD83D\uDDE1"+stacklandsUnit.getAtk()+"", 30, 285);
-            if (stacklands instanceof StacklandsUser) {
-                //画食物
-                g.setColor(Color.black);
-                g.setFont(new Font(null, Font.PLAIN, 40));
-                g.drawString("肉:" + ((StacklandsUser) stacklands).getFood(), 180, 100);
-            }
-        }
-        //如果是建筑
-        if (stacklands instanceof StacklandsBuilds){
-            StacklandsBuilds stacklandsBuilds=(StacklandsBuilds)stacklands;
-            // 画背景
-            g.drawImage(getStacklandsAvatar("空白卡片.png"),0,0, null);
-            //画血量
+            g.drawString("\uD83D\uDDE1"+stacklandsUnit.getAtk()+"", 5, 285);
+            //画食物
             g.setColor(Color.black);
-            //画备注
-            //g.drawString("获得食物+1", 40, 285);
+            g.setFont(new Font(null, Font.PLAIN, 40));
+            g.drawString("肉:" + stacklandsUnit.getFood(), 190, 100);
+            g.setColor(Color.BLACK);
+            //画名字
+            g.drawString(stacklands.getName()+"", 20, 50);
+            //画等级
+            g.setFont(new Font(null, Font.PLAIN, 30));
+            g.setColor(Color.black);
+            g.drawString("LV:"+stacklandsUnit.getExperience()+"", 210, 40);
+            g.setFont(new Font(null, Font.PLAIN, 20));
+            g.drawString("Exp:"+stacklandsUnit.getLevel()+"", 20, 90);
+            //画角色
+            //g.drawImage(getStacklandsAvatar(stacklands.getImageName()),70 ,100 ,140,140, null);
+
         }
-        // 黑色字体 字号30。中文可能需要自己加载字体文件
-        g.setColor(Color.BLACK);
-        //画名字
-        g.drawString(stacklands.getName()+"", 40, 50);
-        //画角色
-        g.drawImage(getStacklandsAvatar(stacklands.getImageName()),70 ,100 ,140,140, null);
 
         return bufferedImage;
     }
@@ -124,33 +124,49 @@ public class ImageController {
         g.fillRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
         // 画背景
         g.drawImage(getStacklandsAvatar("世界背景.png"),0,0, 2000,2000,null);
-        StacklandsUser user=(StacklandsUser) stacklandsMap.get(qq);
-        for (Map.Entry<Long,Stacklands> entry : stacklandsMap.entrySet()) {
-            System.out.println("key= " + entry.getKey() + " and value= " + entry.getValue());
-            Stacklands stacklands=entry.getValue();
+        StacklandsUser user= userMap.get(qq);
+        for (Map.Entry<Long,StacklandsUser> entry : userMap.entrySet()) {
+            StacklandsUser stacklands=entry.getValue();
             if (user == stacklands){
                 //如果是自己跳过
                 continue;
             }
-            if (user.getWorldX()-stacklands.getWorldX()>500 || user.getWorldX()-stacklands.getWorldX()<500){
-                if (user.getWorldY()-stacklands.getWorldY()>500 || user.getWorldY()-stacklands.getWorldY()<500){
-                    g.drawImage(getStacklandsWorldAvatar(stacklands.getId()),1000-user.getWidth()/2+ user
-                        .getWorldX()-stacklands.getWorldX(), 1000-user.getHeight()/2 + user
-                        .getWorldY()-stacklands.getWorldY(),null);
-                    if (stacklands instanceof StacklandsBuilds){
-                        if (user.hit(stacklands)){
-                            //stacklandsMap.remove(stacklands.getId());
-                            user.setFood(user.getFood()+((StacklandsBuilds) stacklands).dropFood());
-                            g.setColor(Color.GREEN);
-                            g.setFont(new Font(null, Font.PLAIN, 60));
-                            g.drawString("获得食物"+((StacklandsBuilds) stacklands).dropFood(), 1000-user.getWidth()/2+ user
-                                .getWorldX()-stacklands.getWorldX()+200, 1000-user.getHeight()/2 + user
-                                .getWorldY()-stacklands.getWorldY()+100);
-                        }
+            if (user.hitSee(stacklands)){
+                g.drawImage(getStacklandsWorldAvatar(stacklands.getId()),1000-user.getWidth()/2+ user
+                    .getWorldX()-stacklands.getWorldX(), 1000-user.getHeight()/2 + user
+                    .getWorldY()-stacklands.getWorldY(),null);
+            }
+
+        }
+
+        for (StacklandsBuilds builds : buildList) {
+            if (builds.hitSee(user)){
+                g.drawImage(getStacklandsAvatar(builds.getImageName()),1000-user.getWidth()/2+ user
+                    .getWorldX()-builds.getWorldX(), 1000-user.getHeight()/2 + user
+                    .getWorldY()-builds.getWorldY(),builds.getWidth(),builds.getHeight(),null);
+                if (builds.hit(user)){
+                    if (builds.dropFood()!=0) {
+                        g.setColor(Color.GREEN);
+                        g.setFont(new Font(null, Font.PLAIN, 60));
+                        g.drawString("获得食物" + builds.dropFood(),
+                            1000 - user.getWidth() / 2 + user
+                                .getWorldX() - builds.getWorldX() + 200,
+                            1000 - user.getHeight() / 2 + user
+                                .getWorldY() - builds.getWorldY() + 100);
+                    }
+                    if (builds.dropFood()!=0) {
+                        g.setColor(Color.orange);
+                        g.setFont(new Font(null, Font.PLAIN, 60));
+                        g.drawString("获得经验" + builds.dropExperience(),
+                            1000 - user.getWidth() / 2 + user
+                                .getWorldX() - builds.getWorldX() + 200,
+                            1000 - user.getHeight() / 2 + user
+                                .getWorldY() - builds.getWorldY() + 200);
                     }
                 }
             }
         }
+
         //画角色
         g.drawImage(getStacklandsWorldAvatar(qq), 1000-user.getWidth()/2, 1000-user.getHeight()/2, null);
         return bufferedImage;

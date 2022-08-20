@@ -45,5 +45,12 @@ public class StacklandsUnit extends Stacklands implements Food, Experience {
     setWorldX(toX);
     setWorldY(toY);
   }
-
+  public boolean addHealth(Integer addHealth){
+    health+=addHealth;
+    return true;
+  }
+  public boolean addNowHealth(Integer addNowHealth){
+    nowHealth+=addNowHealth;
+    return true;
+  }
 }

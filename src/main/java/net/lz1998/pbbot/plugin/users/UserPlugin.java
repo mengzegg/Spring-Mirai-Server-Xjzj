@@ -21,23 +21,23 @@ public class UserPlugin  extends BotPlugin {
     long qq=event.getUserId();
     String text = event.getRawMessage();
     /*只有.的指令继续判断*/
-    if (!text.startsWith(".")){
+/*    if (!text.startsWith(".")){
       return MESSAGE_BLOCK;
-    }
+    }*/
     User user=userService.getUserByQq(qq);
     Msg msg=Msg.builder();
     /*菜单*/
-    if (".菜单".equals(text)) {
-      msg.text(".菜单");
-      msg.text("\n.注册");
-      msg.text("\n.我的账户");
+    if ("菜单".equals(text)) {
+      msg.text("菜单");
+      msg.text("\n注册");
+      msg.text("\n我的账户");
 
-      msg.text("\n.打卡");
+      msg.text("\n打卡");
       bot.sendGroupMsg(groupId, msg, false);
       return MESSAGE_BLOCK;
     }
     /*用户注册*/
-    if (".注册".equals(text)) {
+    if ("注册".equals(text)) {
       if (user!=null){
         msg.text("已注册，无须重复注册");
         bot.sendGroupMsg(groupId, msg, false);
@@ -50,11 +50,11 @@ public class UserPlugin  extends BotPlugin {
     }
     /*没注册不继续执行*/
     if (user==null){
-      msg.text("您还未注册，请输入.注册");
+      msg.text("您还未注册，请输入 注册");
       bot.sendGroupMsg(groupId, msg, false);
       return MESSAGE_BLOCK;
     }
-    if (".我的账户".equals(text)){
+    if ("我的账户".equals(text)){
       /*msg.at(qq);*/
       GetGroupMemberInfoResp groupMember=bot.getGroupMemberInfo(groupId,qq,true);
       msg.image("http://localhost:8081/getImage?qq=" + qq);
